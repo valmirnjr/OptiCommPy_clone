@@ -82,6 +82,10 @@ def cpr(Ei, symbTx=[], paramCPR=[]):
     return Eo, θ
 
 
+def gen_test_phases(num_rotations: int) -> np.ndarray:
+    return np.arange(num_rotations) * (np.pi / 2) / num_rotations
+
+
 @njit
 def bps(Ei, N, constSymb, B):
     """
@@ -107,7 +111,7 @@ def bps(Ei, N, constSymb, B):
 
     nModes = Ei.shape[1]
 
-    ϕ_test = np.arange(0, B) * (np.pi / 2) / B  # test phases
+    ϕ_test = gen_test_phases(B)
 
     θ = np.zeros(Ei.shape, dtype="float")
 
