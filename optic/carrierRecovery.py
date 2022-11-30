@@ -3,6 +3,7 @@ import numpy as np
 from commpy.modulation import QAMModem
 from numba import njit
 from numpy.fft import fft, fftfreq, fftshift
+import optic.carrierRecoveryGPU as carrierRecoveryGPU
 
 
 def cpr(Ei, symbTx=[], paramCPR=[]):
@@ -70,6 +71,8 @@ def cpr(Ei, symbTx=[], paramCPR=[]):
         θ = ddpll(Ei, Ts, Kv, tau1, tau2, constSymb, symbTx, pilotInd)
     elif alg == "bps":
         θ = bps(Ei, int(N / 2), constSymb, B)
+    elif alg == "bpsGPU":
+        θ = carrierRecoveryGPU.bps(Ei, int(N / 2), constSymb, B)
     else:
         raise ValueError("CPR algorithm incorrectly specified.")
     θ = np.unwrap(4 * θ, axis=0) / 4
@@ -82,6 +85,7 @@ def cpr(Ei, symbTx=[], paramCPR=[]):
     return Eo, θ
 
 
+@njit
 def gen_test_phases(num_rotations: int) -> np.ndarray:
     return np.arange(num_rotations) * (np.pi / 2) / num_rotations
 
